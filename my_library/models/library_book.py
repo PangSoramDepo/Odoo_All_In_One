@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.addons import decimal_precision as dp
 
 class LibraryBook(models.Model):
     _name           =   'library.book'
@@ -21,6 +22,11 @@ class LibraryBook(models.Model):
     reader_rating   =   fields.Float    ('Reader Average Rating',digits=(14,4))
     author_ids      =   fields.Many2many('res.partner', string='Authors')
     active          =   fields.Boolean  ('Active',default=True)
+    cost_price      =   fields.Float    ('Book Cost',dp.get_precision('Book Price'))
+    currency_id     =   fields.Many2one ('res.currency',String="Currency For Price")
+    costs_id        =   fields.Many2one ('res.currency',String="Currency For Cost")
+    currency_price  =   fields.Monetary ('Currency Price')
+    costs_price     =   fields.Monetary ('Cost Price')
     
 
     def name_get(self):
