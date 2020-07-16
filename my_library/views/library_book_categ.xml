@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    
+    <!-- library.book.category action window -->
+    <record id="library_book_category_action" model="ir.actions.act_window">
+        <field name="name">Book Category</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">library.book.category</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+    </record>
+
+    <!-- library.book.categ form view -->
+    <record id="library_book_category_view_form" model="ir.ui.view">
+        <field name="name">Book Category</field>
+        <field name="model">library.book.category</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="parent_id"/>
+                        <field name="child_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- library.book.category tree view -->
+    <record id="library_book_category_view_tree" model="ir.ui.view">
+        <field name="name">Book Categorys</field>
+        <field name="model">library.book.category</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="library_book_category_menu" name="Book Categories" parent="my_library.library_base_menu" action="library_book_category_action"/>
+</odoo>
