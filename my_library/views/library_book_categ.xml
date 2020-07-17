@@ -21,6 +21,9 @@
                         <field name="name"/>
                         <field name="parent_id"/>
                         <field name="child_ids"/>
+                        <field name="description"/>
+                        <button name="create_categories" type="object" string="Create Category"/>
+                        <button name="create_multi_category" type="object" string="Create Multi Category"/>
                     </group>
                 </sheet>
             </form>

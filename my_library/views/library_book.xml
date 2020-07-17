@@ -44,6 +44,10 @@
                     <group>
                         <field name="description"/>
                         <field name="active"/>
+                        <button name="make_available" type="object" string="Make Available"/>
+                        <button name="make_borrowed" type="object" string="Make Borrowed"/>
+                        <button name="make_lost" type="object" string="Make Lost"/>
+                        <button name="post_to_webservice" type="object" string="Test Request"/>
                     </group>
                 </sheet>
             </form>

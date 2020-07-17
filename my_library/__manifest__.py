@@ -29,6 +29,7 @@
         'views/templates.xml',
         'views/library_book.xml',
         'views/library_book_categ.xml',
+        'views/library_member.xml'
     ],
     # only loaded in demonstration mode
     'demo': [
