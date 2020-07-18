@@ -53,12 +53,12 @@ class LibraryBook(models.Model):
         published_book_ids  =   fields.One2many('library.book','publisher_id',string='Published Books')
         authored_book_ids   =   fields.Many2many('library.book',string='Authored Books',#relation='library_book_res_partner_rel' #optional
                                                 )
-        count_books         =   fields.Integer('Number of Authored Books',compute='_compute_count_books',store=True)
+        # count_books         =   fields.Integer('Number of Authored Books',compute='_compute_count_books',store=True)
 
-        @api.depends('authored_book_ids')
-        def _compute_count_books(self):
-            for r in self:
-                r.count_books=len(r.authored_book_ids)
+        # @api.depends('authored_book_ids')
+        # def _compute_count_books(self):
+        #     for r in self:
+        #         r.count_books=len(r.authored_book_ids)
 
     class BaseArchive(models.AbstractModel):
         _name               =   'base.archive'
@@ -194,6 +194,17 @@ class LibraryBook(models.Model):
             result.append((record.id,rec_name))
         return result
 
+    def mapped_book(self):
+        all_books=self.search([])
+        book_authors=self.get_author_names(all_books)
+        logger.info('All Books : {}'.format(all_books))
+        logger.info('Books Author: {}'.format(book_authors))
+
+    def sort_book(self):
+        all_books=self.search([])
+        sort=self.sort_books_by_date(all_books)
+        logger.info('Sort Books : {}'.format(sort))
+
     @api.constrains('date_release')
     def _check_release_date(self):
         for record in self:
@@ -204,6 +215,14 @@ class LibraryBook(models.Model):
     def _referencable_models(self):
         models=self.env['ir.model'].search([('field_id.name','=','message_id')])
         return [(x.model,x.name) for x in models]
+
+    @api.model
+    def get_author_names(self, books):
+        return books.mapped('author_ids.name')
+
+    @api.model
+    def sort_books_by_date(self,books):
+        return books.sorted(key='date_release',reverse=True)
 
     @api.model
     def books_with_multiple_authors(self,all_books):

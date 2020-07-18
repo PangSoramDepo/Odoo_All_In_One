@@ -50,6 +50,8 @@
                         <button name="post_to_webservice" type="object" string="Test Request"/>
                         <button name="change_update_date" type="object" string="Update Date"/>
                         <button name="find_book" string="Find Book" type="object"/>
+                        <button name="mapped_book" type="object" string="Map Book"/>
+                        <button name="sort_book" type="object" string="Sort Book"/>
                     </group>
                 </sheet>
             </form>
