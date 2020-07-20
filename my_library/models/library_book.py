@@ -4,9 +4,13 @@ from datetime import timedelta
 from openerp.exceptions import ValidationError, UserError
 from odoo.tools.translate import _
 import requests 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class LibraryBook(models.Model):
     # translatable,name,required,related_sudo,compute_sudo
+    # To combine two recordset : r=r1+r2, r=r1 | r2 (no duplicate data), r=r1 & r2
     _name           =   'library.book'
     _inherit        =   ['base.archive']
     _description    =   'Library Book'
@@ -90,6 +94,42 @@ class LibraryBook(models.Model):
             ('lost','available')]
         return (old_state,new_state) in allowed
 
+    # Update Data have 2 recipe like below :
+
+    @api.multi
+    def change_update_date_recipe_1(self):
+        self.ensure_one()
+        self.date_updated=fields.Datetime.now()
+
+    @api.multi
+    def change_update_date_recipe_2(self):
+        self.ensure_one()
+        self.update({
+            'date_updated'  :   fields.Datetime.now(),
+            'name'          :   'updated'
+        })
+
+    # End ------ Update Data have 2 recipe ------
+
+    @api.multi
+    def find_book(self):
+        domain  =   ['|',
+            '&',('name','like','Book Name'),
+            ('category_id.name','ilike','Category Name'),
+            '&',('name','ilike','Book Name 2'),
+            ('category_id.name','ilike','Category Name 2')
+        ]
+        books=self.search(domain)
+        logger.info('Books found: %s', books)
+        return True
+
+    @api.multi
+    def find_partner(self):
+        PartnerObj  =   self.env['res.partner']
+        domain      =   ['&',('name','ilike','Parth Gajjar'),('company_id.name','=','Odoo')]
+        partner     =   PartnerObj.search(domain)
+        logger.info('Find Parner Execute found: %s', partner)
+
     @api.multi
     def change_state(self,new_state):
         for book in self:
@@ -164,3 +204,15 @@ class LibraryBook(models.Model):
     def _referencable_models(self):
         models=self.env['ir.model'].search([('field_id.name','=','message_id')])
         return [(x.model,x.name) for x in models]
+
+    @api.model
+    def books_with_multiple_authors(self,all_books):
+        def predicate(book):
+            if len(book.author_ids) > 1:
+                return True
+            return False
+        return all_books.filter(predicate)
+
+    # @api.model
+    # def books_with_multiple_authors(self,all_books):
+    #     return all_books.filter(lambda b: len(b.author_ids) > 1)

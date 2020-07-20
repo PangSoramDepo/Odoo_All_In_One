@@ -48,6 +48,8 @@
                         <button name="make_borrowed" type="object" string="Make Borrowed"/>
                         <button name="make_lost" type="object" string="Make Lost"/>
                         <button name="post_to_webservice" type="object" string="Test Request"/>
+                        <button name="change_update_date" type="object" string="Update Date"/>
+                        <button name="find_book" string="Find Book" type="object"/>
                     </group>
                 </sheet>
             </form>
