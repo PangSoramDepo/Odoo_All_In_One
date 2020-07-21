@@ -28,6 +28,8 @@
                             <field name="currency_id"/>
                             <field name="currency_price"/>
                             <field name="age_days"/>
+                            <field name="manager_remarks"/>
+                            <field name="old_edition"/>
                         </group>
                         <group>
                             <field name="short_name"/>
@@ -46,12 +48,13 @@
                         <field name="active"/>
                         <button name="make_available" type="object" string="Make Available"/>
                         <button name="make_borrowed" type="object" string="Make Borrowed"/>
-                        <button name="make_lost" type="object" string="Make Lost"/>
+                        <button name="_make_lost" type="object" string="Make Lost"/>
                         <button name="post_to_webservice" type="object" string="Test Request"/>
                         <button name="change_update_date" type="object" string="Update Date"/>
                         <button name="find_book" string="Find Book" type="object"/>
                         <button name="mapped_book" type="object" string="Map Book"/>
                         <button name="sort_book" type="object" string="Sort Book"/>
+                        <button name="_get_average_cost" type="object" string="Average Cost"/>
                     </group>
                 </sheet>
             </form>

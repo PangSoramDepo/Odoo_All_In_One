@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
 from odoo.addons import decimal_precision as dp
 from datetime import timedelta
 from openerp.exceptions import ValidationError, UserError
@@ -21,7 +21,7 @@ class LibraryBook(models.Model):
     _sql_constraints=   [('name_uniq', 'UNIQUE (name)', 'Book title must be unique.'),('positive_page','CHECK(pages>0)','No of pages must be positive')]
 
     name            =   fields.Char     ('Title', required=True)
-    short_name      =   fields.Char     ('Short Title',translate=True,index=True)
+    short_name      =   fields.Char     ('Short Titlerrrtg',translate=True,index=True)
     notes           =   fields.Text     ('Internal Notes')
     state           =   fields.Selection([('draft','Unavailable'),('available','Available'),('borrowed','Borrowed'),('lost','Lost')],'State',default='draft')
     description     =   fields.Html     ('Description',sanitize=True,strip_style=False)
@@ -45,6 +45,9 @@ class LibraryBook(models.Model):
                                             store=False,
                                             compute_sudo=False,)
     ref_doc_id      =   fields.Reference(selection='_referencable_models',string='Reference Document')
+    manager_remarks =   fields.Text('Manager Remarks')
+    isbn            =   fields.Char('ISBN')
+    old_edition     =   fields.Many2one('library.book',string="Old Edition")
 
     class ResPartner(models.Model):
         _inherit            =   'res.partner'
@@ -91,8 +94,50 @@ class LibraryBook(models.Model):
             ('available','borrowed'),
             ('available','lost'),
             ('borrowed','lost'),
+            ('borrowed','available'),
             ('lost','available')]
         return (old_state,new_state) in allowed
+        
+    @api.model
+    def create(self,values):
+        if not self.user_has_groups('my_library.group_librarian'):
+            if 'manager_remarks' in values:
+                raise UserError('Create: You are not allowed to modify manager_remarks')
+        return super(LibraryBook,self).create(values)
+
+    @api.multi
+    def write(self,values):
+        if not self.user_has_groups('my_library.group_librarian'):
+            if 'manager_remarks' in values:
+                del values['manager_remarks']
+                # raise UserError('Write: You are not allowed to modify manager_remarks')
+        return super(LibraryBook,self).write(values)
+
+    @api.multi
+    def name_get(self):
+        result=[]
+        for book in self:
+            authors=book.author_ids.mapped('name')
+            name='{} ({})'.format(book.name,', '.join(authors))
+            result.append((book.id,name))
+        return result
+
+    @api.model
+    def _name_search(self,name='',args=None,operator='ilike',limit=100,name_get_uid=None):
+        args=[] if args is None else args.copy()
+        if not (name=='' and operator=='ilike'):
+            args+=['|','|',('name',operator,name),('isbn',operator,name),('author_ids.name',operator,name)]
+        return super(LibraryBook,self)._name_search(name=name,args=args,operator=operator,limit=limit,name_get_uid=name_get_uid)
+
+    @api.model
+    def _get_average_cost(self):
+        grouped_result  =   self.read_group(
+            [('cost_price','!=',False)],
+            ['category_id','cost_price:avg'],
+            ['category_id']
+        )
+        logger.info("----------Average Cost----------- {}".format(grouped_result))
+        return grouped_result
 
     # Update Data have 2 recipe like below :
 
@@ -145,7 +190,7 @@ class LibraryBook(models.Model):
     def make_borrowed(self):
         self.change_state('borrowed')
 
-    def make_lost(self):
+    def _make_lost(self):
         self.change_state('lost')
 
     def post_to_webservice(self,data):
@@ -187,12 +232,12 @@ class LibraryBook(models.Model):
         new_op = operator_map.get(operator, operator)
         return [('date_release', new_op, value_date)]
     
-    def name_get(self):
-        result=[]
-        for record in self:
-            rec_name="{} ({})".format(record.name,record.date_release)
-            result.append((record.id,rec_name))
-        return result
+    # def name_get(self):
+    #     result=[]
+    #     for record in self:
+    #         rec_name="{} ({})".format(record.name,record.date_release)
+    #         result.append((record.id,rec_name))
+    #     return result
 
     def mapped_book(self):
         all_books=self.search([])
