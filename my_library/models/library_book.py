@@ -139,6 +139,13 @@ class LibraryBook(models.Model):
         logger.info("----------Average Cost----------- {}".format(grouped_result))
         return grouped_result
 
+    @api.model
+    def update_book_price(self):
+        logger.info('----------update_book_price called-----------')
+        all_books =self.search([])
+        for book in all_books:
+            book.cost_price+=10
+
     # Update Data have 2 recipe like below :
 
     @api.multi
@@ -190,8 +197,11 @@ class LibraryBook(models.Model):
     def make_borrowed(self):
         self.change_state('borrowed')
 
-    def _make_lost(self):
-        self.change_state('lost')
+    def make_lost(self):
+        self.ensure_one()
+        self.state = 'lost'
+        if not self.env.context.get('avoid_deactivate'):
+            self.active = False
 
     def post_to_webservice(self,data):
         try:
@@ -201,6 +211,21 @@ class LibraryBook(models.Model):
             error_msg=_("Something went wrong during data submission")
             raise UserError(error_msg)
         return content
+
+    def average_book_occupation(self):
+        sql_query = """
+            SELECT
+                lb.name,
+                avg((EXTRACT(epoch from age(return_date, rent_date)) / 86400))::int
+            FROM
+                library_book_rent AS lbr
+            JOIN
+                library_book as lb ON lb.id = lbr.book_id
+            WHERE lbr.state = 'returned'
+            GROUP BY lb.name;"""
+        self.env.cr.execute(sql_query)
+        result = self.env.cr.fetchall()
+        logger.info("Average book occupation: %s", result)
 
     @api.depends('date_release')
     def _compute_age(self):
@@ -249,6 +274,16 @@ class LibraryBook(models.Model):
         all_books=self.search([])
         sort=self.sort_books_by_date(all_books)
         logger.info('Sort Books : {}'.format(sort))
+
+    def book_rent(self):
+        self.ensure_one()
+        if self.state != 'available':
+            raise UserError(_('Book is not avaible for renting'))
+        rent_as_superuser = self.env['library.book.rent'].sudo()
+        rent_as_superuser.create({
+            'book_id': self.id,
+            'borrower_id': self.env.user.partner_id.id,
+        })
 
     @api.constrains('date_release')
     def _check_release_date(self):

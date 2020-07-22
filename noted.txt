@@ -1,0 +1,13 @@
+*Get Id of current record
+	self.id
+*Get property of current User Login (Get Id of current user)
+	self.env.user.partner_id.id
+*Check User Has Group
+	self.user_has_groups('my_library.group_librarian')
+*Get All Record of current Model
+	self.search([])
+*Get All Record of by Model
+	self.env['res.partner'].search([])
+*Model pass data to another model
+	M1 : self.book_id.with_context(avoid_deactivate=True)
+	M2 : self.env.context.get('avoid_deactivate')
