@@ -31,6 +31,10 @@
         'views/library_book_categ.xml',
         'views/library_member.xml',
         'views/library_book_rent.xml',
+        'views/library_book_rent_wizard.xml',
+        'views/library_book_return_wizard.xml',
+        'views/library_book_statistics.xml',
+        'views/res_config_settings_views.xml',
         'data/data.xml',
     ],
     # only loaded in demonstration mode

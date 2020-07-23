@@ -1,4 +1,4 @@
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api, exceptions , tools
 from odoo.addons import decimal_precision as dp
 from datetime import timedelta
 from openerp.exceptions import ValidationError, UserError
@@ -181,6 +181,23 @@ class LibraryBook(models.Model):
         domain      =   ['&',('name','ilike','Parth Gajjar'),('company_id.name','=','Odoo')]
         partner     =   PartnerObj.search(domain)
         logger.info('Find Parner Execute found: %s', partner)
+
+    @api.multi
+    def return_all_books(self):
+        self.ensure_one()
+        wizard = self.env['library.return.wizard']
+        values = {
+            'borrower_id': self.env.user.partner_id.id,
+        }
+        specs = wizard._onchange_spec()
+        updates = wizard.onchange(values, ['borrower_id'], specs)
+        value = updates.get('value', {})
+        for name, val in value.items():
+            if isinstance(val, tuple):
+                value[name] = val[0]
+        values.update(value)
+        wiz = wizard.create(values)
+        return wiz.sudo().books_returns()
 
     @api.multi
     def change_state(self,new_state):
