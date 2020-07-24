@@ -37,6 +37,7 @@
         'views/res_config_settings_views.xml',
         'data/data.xml',
     ],
+    'post_init_hook': 'add_book_hook',
     # only loaded in demonstration mode
     'demo': [
         'data/demo.xml',

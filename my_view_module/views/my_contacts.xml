@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- res.partner action window -->
+    <record id="action_all_customers" model="ir.actions.act_window">
+        <field name="name">All Customers</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="domain">[('customer','=',True)]</field>
+        <field name="context">{'default_customer': True, 'form_view_ref': 'my_view_module.view_all_customers_form'}</field>
+        <field name="limit">20</field>
+    </record>
+
+    <!-- res.partner tree view -->
+    <record id="action_all_customers_tree" model="ir.ui.view">
+        <field name="name">All Customers Tree View</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree>
+                <!-- Add your fields here -->
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- res.partner form view -->
+    <record id="view_all_customers_form" model="ir.ui.view">
+        <field name="name">All Customers Form View</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <header>
+                    <button type="object" name="open_commercial_entity" string="Open commercial partner" class="btn-primary" />
+                    <button name="base.action_partner_category_form" type="action" string="Open partner category"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                        </button>
+                    </div>
+                    <div class="oe_left oe_title">
+                        <label for="name" />
+                        <h1>
+                            <field name="name" />
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="category_id" widget="many2many_tags" />
+                        <field name="email"/>
+                        <field name="mobile"/>
+                    </group>
+                    <notebook>
+                        <page string="Tap 1" name="popo">
+                            <group>
+                                <field name="email"/>
+                            </group>
+                        </page>
+                        <page string="Tap 2" name="depo">
+                            <group>
+                                <field name="mobile"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div> -->
+            </form>
+        </field>
+    </record>
+
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="menu_custom_top_level" name="My App menu" web_icon="my_view_module,static/description/nature.png"/>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="customer_menu_act" parent="menu_custom_top_level" action="action_all_customers_fr"/>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="menu_all_customers" parent="menu_custom_top_level" action="action_all_customers" sequence="10"/>
+    <!-- Action -->
+    <act_window id="action_all_customers_fr" name="Tous les clients" res_model="res.partner" domain="[('customer','=',True)]" context="{'lang':'fr_FR','default_lang':'fr_FR','active_test':False}" target="main"/>
+</odoo>

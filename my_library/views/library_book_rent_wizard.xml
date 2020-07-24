@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <record id='library_rent_wizard_form' model='ir.ui.view'>
         <field name='name'>library rent wizard form view</field>
         <field name='model'>library.rent.wizard</field>
