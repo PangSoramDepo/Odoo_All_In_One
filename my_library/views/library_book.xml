@@ -8,6 +8,7 @@
         <field name="res_model">library.book</field>
         <field name="view_mode">tree,form</field>
         <field name="view_type">form</field>
+        <field name="context">{'custom_search': True}</field>
         <!-- <field name="context">{'active_test': False}</field> -->
     </record>
 
@@ -15,6 +16,7 @@
     <record id="library_book_view_form" model="ir.ui.view">
         <field name="name">Library Book Form</field>
         <field name="model">library.book</field>
+        <!-- <field name="context">{'custom_search': True}</field> -->
         <field name="arch" type="xml">
             <form>
                 <header>
@@ -78,6 +80,8 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="custom_name"/>
+                <field name="age_days" />
                 <field name="date_release"/>
             </tree>
         </field>

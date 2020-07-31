@@ -8,6 +8,7 @@ class BookCategory(models.Model):
     _parent_name    =   'parent_id'
 
     name            =   fields.Char('Category')
+    book_id = fields.Many2one('library.book', 'Book', required=True)
     description     =   fields.Text('Description')
     parent_id       =   fields.Many2one('library.book.category',string='Parent Category',ondelete='restrict',index=True)
     child_ids       =   fields.One2many('library.book.category','parent_id',string='Child Category')

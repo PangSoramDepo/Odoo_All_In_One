@@ -19,6 +19,7 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="book_id"/>
                         <field name="parent_id"/>
                         <field name="child_ids"/>
                         <field name="description"/>

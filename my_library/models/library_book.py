@@ -15,12 +15,14 @@ class LibraryBook(models.Model):
     _inherit        =   ['base.archive']
     _description    =   'Library Book'
     _order          =   'date_release desc,name'
+    # _columns        =   {'custom_title': fields.function(name_names, type='text', string='New Title')}
 
     _rec_name       =   'short_name'
     _log_access     =   False
     _sql_constraints=   [('name_uniq', 'UNIQUE (name)', 'Book title must be unique.'),('positive_page','CHECK(pages>0)','No of pages must be positive')]
 
     name            =   fields.Char     ('Title', required=True)
+    custom_name     =   fields.Char     ('Custom Title',compute='_compute_age',store=True)
     short_name      =   fields.Char     ('Short Titlerrrtg',translate=True,index=True)
     notes           =   fields.Text     ('Internal Notes')
     state           =   fields.Selection([('draft','Unavailable'),('available','Available'),('borrowed','Borrowed'),('lost','Lost')],'State',default='draft')
@@ -48,6 +50,15 @@ class LibraryBook(models.Model):
     manager_remarks =   fields.Text('Manager Remarks')
     isbn            =   fields.Char('ISBN')
     old_edition     =   fields.Many2one('library.book',string="Old Edition")
+
+    def name_names(self, cr, uid, ids, name, args, context=None):
+        logger.info("-----------------------Jol Name------------------------------")
+        res = {}
+        for _obj in self.browse(cr, uid, ids, context=None):
+            logger.info("-----------------------Obj------------------------------ {}".format(_obj))
+            res[_obj.id] = _obj
+
+        return res
 
     class ResPartner(models.Model):
         _inherit            =   'res.partner'
@@ -117,9 +128,12 @@ class LibraryBook(models.Model):
     def name_get(self):
         result=[]
         for book in self:
-            authors=book.author_ids.mapped('name')
-            name='{} ({})'.format(book.name,', '.join(authors))
-            result.append((book.id,name))
+            if self.env.context.get('custom_search', False):
+                authors=book.author_ids.mapped('name')
+                name='{} ({})'.format(book.name,', '.join(authors))
+                result.append((book.id,name))
+            else:
+                result.append((book.id,book.name))
         return result
 
     @api.model
@@ -244,12 +258,21 @@ class LibraryBook(models.Model):
         result = self.env.cr.fetchall()
         logger.info("Average book occupation: %s", result)
 
-    @api.depends('date_release')
-    def _compute_age(self):
+    @api.onchange('date_release','custom_name')
+    def _compute_age_onchange(self):
+        logger.info("------------------------Onchange Execute DEPO-------------------------------")
         today = fields.Date.today()
         for book in self.filtered('date_release'):
             delta = today - book.date_release
             book.age_days = delta.days
+            # book.name=book.name+" Depo1"
+
+    @api.multi
+    @api.depends('name')
+    def _compute_age(self):
+        logger.info("------------------------Depends Execute DEPO-------------------------------")
+        for book in self:
+            book.custom_name="PoPo"
 
     # This reverse method of _compute_age. Used to make age_days field editable
     # It is optional if you don't want to make compute field editable then you can remove this

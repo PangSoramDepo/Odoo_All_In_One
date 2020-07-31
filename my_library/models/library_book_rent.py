@@ -30,3 +30,18 @@ class LibraryBookRent(models.Model):
         self.state='lost'
         book_with_different_context = self.book_id.with_context(avoid_deactivate=True)
         book_with_different_context.make_lost()
+
+# class LibraryBook(models.Model):
+#     _inherit    =   "library.book"
+
+#     @api.multi
+#     def name_get(self):
+#         result=[]
+#         for book in self:
+#             if not self.env.context.get('custom_search', False):
+#                 authors=book.author_ids.mapped('name')
+#                 name='{} ({})'.format(book.name,', '.join(authors))
+#                 result.append((book.id,name))
+#             else:
+#                 result.append((book.id,book.name))
+#         return result
