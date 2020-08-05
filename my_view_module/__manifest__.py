@@ -28,6 +28,7 @@
         'views/views.xml',
         'views/templates.xml',
         'views/my_contacts.xml',
+        'views/inject.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

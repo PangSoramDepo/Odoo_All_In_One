@@ -1,5 +1,8 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+import logging
+
+logger = logging.getLogger(__name__)
 
 class BookCategory(models.Model):
     _name           =   'library.book.category'
@@ -37,3 +40,32 @@ class BookCategory(models.Model):
         categ2 = {'name' : 'Category 2','description' : 'Description for Category 2'}
 
         multiple_records=self.env['library.book.category'].create([categ1,categ2])
+
+# class LibraryBook(models.Model):
+#     _inherit    =   "library.book"
+
+#     @api.multi
+#     def name_get(self):
+#         result=[]
+#         for book in self:
+#             if not self.env.context.get('custom_search', False):
+#                 authors=book.author_ids.mapped('name')
+#                 name='{} ({})'.format(book.name,', '.join(authors))
+#                 result.append((book.id,name))
+#                 logger.info("------------------------Cate Name Get If----------------------------")
+#             else:
+#                 result.append((book.id,book.name))
+#                 logger.info("------------------------Cate Name Get Else----------------------------")
+#         return result
+
+class LibraryBook(models.Model):
+    _inherit = 'library.book'
+
+    def name_get(self):
+        logger.info("--------------Before Hook-------------------")
+        # do something before
+        value = super(LibraryBook, self).name_get()
+        # do something after
+        logger.info("--------------After Hook-------------------")
+        logger.info("--------------Value Hook------------------- {}".format(value))
+        return value

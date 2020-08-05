@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- Positin : before , inside , after , replace , attributes -->
+    <!-- Inject To Search form view -->
+    <record id="partner_filter_view_form" model="ir.ui.view">
+        <field name="name">res.partner.view.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="." position="inside">
+                <field name="mobile"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inject To form view -->
+    <record id="partner_view_form" model="ir.ui.view">
+        <field name="name">Inject Form View</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Inject field write date after field website -->
+            <field name="website" position="after">
+                <field name="write_date"/>
+            </field>    
+        </field>
+    </record>
+
+    <!-- res.partner form view -->
+    <record id="partner_tree_view_form" model="ir.ui.view">
+        <field name="name">res.partner.view.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="phone" position="move"/>
+            </field>        
+        </field>
+    </record>
+
+    <!-- res.partner form view -->
+    <record id="partner_view_form" model="ir.ui.view">
+        <field name="name">Inject Form View</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="my_view_module.view_all_customers_form"/>
+        <field name="arch" type="xml">
+            <field name="mobile" position="after">
+                <field name="write_date"/>
+            </field>
+        </field>
+    </record>
+</odoo>

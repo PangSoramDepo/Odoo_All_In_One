@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
+import logging
+
+logger = logging.getLogger(__name__)
 
 class LibraryBookRent(models.Model):
     _name = 'library.book.rent'
@@ -31,17 +34,19 @@ class LibraryBookRent(models.Model):
         book_with_different_context = self.book_id.with_context(avoid_deactivate=True)
         book_with_different_context.make_lost()
 
-# class LibraryBook(models.Model):
-#     _inherit    =   "library.book"
+class LibraryBook(models.Model):
+    _inherit    =   "library.book"
 
-#     @api.multi
-#     def name_get(self):
-#         result=[]
-#         for book in self:
-#             if not self.env.context.get('custom_search', False):
-#                 authors=book.author_ids.mapped('name')
-#                 name='{} ({})'.format(book.name,', '.join(authors))
-#                 result.append((book.id,name))
-#             else:
-#                 result.append((book.id,book.name))
-#         return result
+    @api.multi
+    def name_get(self):
+        result=[]
+        for book in self:
+            if not self.env.context.get('custom_search', False):
+                authors=book.author_ids.mapped('name')
+                name='{} ({})'.format(book.name,', '.join(authors))
+                result.append((book.id,name))
+                logger.info("------------------------Child Name Get If----------------------------")
+            else:
+                result.append((book.id,book.name))
+                logger.info("------------------------Child Name Get Else----------------------------")
+        return result

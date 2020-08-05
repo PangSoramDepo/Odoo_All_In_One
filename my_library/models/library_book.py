@@ -128,11 +128,14 @@ class LibraryBook(models.Model):
     def name_get(self):
         result=[]
         for book in self:
+            logger.info("---------------Context--------------{}".format(self.env.context.get('custom_search')))
             if self.env.context.get('custom_search', False):
                 authors=book.author_ids.mapped('name')
                 name='{} ({})'.format(book.name,', '.join(authors))
                 result.append((book.id,name))
+                logger.info("------------------------Parent Name Get If----------------------------")
             else:
+                logger.info("------------------------Parent Name Get Else----------------------------")
                 result.append((book.id,book.name))
         return result
 
