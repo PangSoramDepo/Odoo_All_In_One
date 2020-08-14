@@ -35,6 +35,7 @@
         'views/library_book_return_wizard.xml',
         'views/library_book_statistics.xml',
         'views/res_config_settings_views.xml',
+        'views/test.xml',
         'data/data.xml',
     ],
     'post_init_hook': 'add_book_hook',

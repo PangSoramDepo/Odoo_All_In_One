@@ -33,6 +33,7 @@
                         <group>
                             <field name="name"/>
                             <field name="author_ids" widget="many2many_tags"/>
+                            <field name="otm_ids" widget="many2many_tags"/>
                             <field name="state"/>
                             <field name="pages"/>
                             <field name="notes"/>

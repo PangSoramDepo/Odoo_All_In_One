@@ -34,6 +34,7 @@ class LibraryBook(models.Model):
     pages           =   fields.Integer  ('Number of Pages',groups='base.group_user',states={'lost':[('readonly',True)]},help='Total book page count',company_dependent=False)
     reader_rating   =   fields.Float    ('Reader Average Rating',digits=(14,4))
     author_ids      =   fields.Many2many('res.partner', string='Authors')
+    otm_ids         =   fields.One2many ('res.partner','book_id', string='O2M')
     cost_price      =   fields.Float    ('Book Cost',dp.get_precision('Book Price'))
     currency_id     =   fields.Many2one ('res.currency',String="Currency")
     currency_price  =   fields.Monetary ('Retail Price')
@@ -64,6 +65,7 @@ class LibraryBook(models.Model):
         _inherit            =   'res.partner'
         _order              =   'display_name'
         
+        book_id             =   fields.Many2one ('library.book',string="Yol Hay")
         published_book_ids  =   fields.One2many('library.book','publisher_id',string='Published Books')
         authored_book_ids   =   fields.Many2many('library.book',string='Authored Books',#relation='library_book_res_partner_rel' #optional
                                                 )
