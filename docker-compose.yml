@@ -1,0 +1,36 @@
+version: '2'
+services:
+  web:
+    image: odoo:14.0
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons/Phum_School:/mnt/extra-addons
+  pg_admin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pangsoramdepo@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=depo1234
+    depends_on:
+      - db
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata13
+    ports:
+      - "5432:5432"
+    volumes:
+      - odoo-db-data13:/var/lib/postgresql/data/pgdata13
+volumes:
+  odoo-web-data:
+  odoo-db-data13:

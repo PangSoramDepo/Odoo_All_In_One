@@ -1,1 +1,5 @@
+//install psutil
 https://github.com/giampaolo/psutil/blob/master/INSTALL.rst
+
+//Odoo can't compile sassc
+https://www.odoo.com/forum/help-1/question/how-to-install-sassc-139497
