@@ -1,15 +1,41 @@
 version: '2'
 services:
+  web12:
+    image: odoo:12.0
+    container_name: odoo12
+    depends_on:
+      - db
+    ports:
+      - "8067:8069"
+    volumes:
+      - odoo-web-12-data:/var/lib/odoo
+      - ./config/odoo12:/etc/odoo
+      - ./addons/odoo12:/mnt/extra-addons
+      - ./addons/All:/mnt/extra-addons-all
+  web13:
+    image: odoo:13.0
+    container_name: odoo13
+    depends_on:
+      - db
+    ports:
+      - "8068:8069"
+    volumes:
+      - odoo-web-13-data:/var/lib/odoo
+      - ./config/odoo13:/etc/odoo
+      - ./addons/odoo13:/mnt/extra-addons
+      - ./addons/All:/mnt/extra-addons-all
   web:
     image: odoo:14.0
+    container_name: odoo14
     depends_on:
       - db
     ports:
       - "8069:8069"
     volumes:
-      - odoo-web-data:/var/lib/odoo
-      - ./config:/etc/odoo
-      - ./addons/Phum_School:/mnt/extra-addons
+      - odoo-web-14-data:/var/lib/odoo
+      - ./config/odoo14:/etc/odoo
+      - ./addons/odoo14/Phum_School:/mnt/extra-addons
+      - ./addons/All:/mnt/extra-addons-all
   pg_admin:
     image: dpage/pgadmin4:latest
     container_name: pgadmin4
@@ -26,11 +52,13 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=odoo
       - POSTGRES_USER=odoo
-      - PGDATA=/var/lib/postgresql/data/pgdata13
+      - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:
-      - odoo-db-data13:/var/lib/postgresql/data/pgdata13
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
 volumes:
-  odoo-web-data:
-  odoo-db-data13:
+  odoo-web-12-data:
+  odoo-web-13-data:
+  odoo-web-14-data:
+  odoo-db-data:
