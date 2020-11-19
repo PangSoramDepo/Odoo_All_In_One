@@ -19,7 +19,7 @@ git config --global user.email pangsoramdepo@gmail.com
 
 mkdir ~/odoo-dev
 cd ~/odoo-dev
-git clone -b 12.0 --single-branch \ https://github.com/odoo/odoo.git
+git clone -b 12.0 --single-branch --depth 1 https://github.com/odoo/odoo.git
 cd odoo
 
 virtualenv -p python3 ~/odoo-12.0
