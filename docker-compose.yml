@@ -1,4 +1,5 @@
 version: '2'
+
 services:
   web12:
     image: odoo:12.0
@@ -12,6 +13,9 @@ services:
       - ./config/odoo12:/etc/odoo
       - ./addons/odoo12:/mnt/extra-addons
       - ./addons/All:/mnt/extra-addons-all
+    networks: 
+      - odoo
+
   web13:
     image: odoo:13.0
     container_name: odoo13
@@ -24,6 +28,9 @@ services:
       - ./config/odoo13:/etc/odoo
       - ./addons/odoo13:/mnt/extra-addons
       - ./addons/All:/mnt/extra-addons-all
+    networks: 
+      - odoo
+
   web:
     image: odoo:14.0
     container_name: odoo14
@@ -34,18 +41,25 @@ services:
     volumes:
       - odoo-web-14-data:/var/lib/odoo
       - ./config/odoo14:/etc/odoo
-      - ./addons/odoo14/Phum_School:/mnt/extra-addons
+      - ./addons/odoo14-addons:/usr/lib/python3/dist-packages/odoo/addons
+      - ./addons/odoo14:/mnt/extra-addons
       - ./addons/All:/mnt/extra-addons-all
+    networks: 
+      - odoo
+
   pg_admin:
     image: dpage/pgadmin4:latest
     container_name: pgadmin4
+    depends_on:
+      - db
     ports:
       - "5050:80"
     environment:
       - PGADMIN_DEFAULT_EMAIL=pangsoramdepo@gmail.com
       - PGADMIN_DEFAULT_PASSWORD=depo1234
-    depends_on:
-      - db
+    networks: 
+      - odoo
+
   db:
     image: postgres:13
     environment:
@@ -56,9 +70,16 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - odoo-db-data:/var/lib/postgresql/data/pgdata
+      - ./postgres-data:/var/lib/postgresql/data
+    networks: 
+      odoo:
+        ipv4_address: 172.16.1.9
+
+networks:
+  odoo:
+    external: true
+
 volumes:
   odoo-web-12-data:
   odoo-web-13-data:
   odoo-web-14-data:
-  odoo-db-data:
